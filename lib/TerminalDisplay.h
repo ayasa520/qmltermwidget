@@ -472,6 +472,19 @@ public:
     bool bracketedPasteModeIsDisabled() const { return _disabledBracketedPasteMode; }
 
 public slots:
+    void test(const char *,int);
+    /**
+     * Returns a pty slave file descriptor.
+     * This can be used for display and control
+     * a remote terminal.
+     */
+    int getPtySlaveFd() const;
+    /**
+     * Start terminal teletype as is
+     * and redirect data for external recipient.
+     * It can be used for display and control a remote terminal.
+     */
+    void startTerminalTeletype();
 
     /**
      * Causes the terminal display to fetch the latest character image from the associated
@@ -640,6 +653,14 @@ signals:
     void fullCursorHeightChanged();
     void blinkingCursorStateChanged();
     void boldIntenseChanged();
+
+    /**
+     * Emitted when emulator send data to the terminal process
+     * (redirected for external recipient). It can be used for
+     * control and display the remote terminal.
+     */
+    void sendData(const char *,int);
+    void sendData2(QString);
 
 protected:
     bool event( QEvent * ) override;

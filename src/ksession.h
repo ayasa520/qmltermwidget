@@ -28,6 +28,7 @@
 // Konsole
 #include "Session.h"
 //#include "TerminalDisplay.h"
+#include "Emulation.h"
 
 using namespace Konsole;
 
@@ -111,6 +112,32 @@ public:
      */
     QString currentDir();
 
+    /**
+     * Starts the terminal session for "as is" PTY
+     * (without the direction a data to internal terminal process).
+     * It can be used for control or display a remote/external terminal.
+     */
+    void runEmptyPTY();
+
+    /**
+     * Returns a pty slave file descriptor.
+     * This can be used for display and control
+     * a remote terminal.
+     */
+    int getPtySlaveFd() const;
+
+    /**
+     * Returns the terminal emulation instance being used to encode / decode
+     * characters to / from the process.
+     */
+    Emulation * emulation() const;
+
+    /**
+     * Returns true if the session is currently running.  This will be true
+     * after run() has been called successfully.
+     */
+    bool isRunning() const;
+
 signals:
     void started();
     void finished();
@@ -119,7 +146,7 @@ signals:
     void termGetFocus();
     void termLostFocus();
 
-    void termKeyPressed(QKeyEvent *, bool);
+    void termKeyPressed(QKeyEvent *event, bool flag);
 
     void changedKeyBindings(QString kb);
 

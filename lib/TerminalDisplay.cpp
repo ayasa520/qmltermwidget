@@ -2906,7 +2906,6 @@ void TerminalDisplay::keyPressEvent( QKeyEvent* event )
 {
     _actSel=0; // Key stroke implies a screen update, so TerminalDisplay won't
               // know where the current selection is.
-
     if (_hasBlinkingCursor)
     {
       _blinkCursorTimer->start(QApplication::cursorFlashTime() / 2);
@@ -3460,7 +3459,6 @@ void TerminalDisplay::setSession(KSession * session)
                     m_session, SIGNAL(termLostFocus()));
         connect(this, SIGNAL(keyPressedSignal(QKeyEvent *, bool)),
                 m_session, SIGNAL(termKeyPressed(QKeyEvent *, bool)));
-
         m_session->addView(this);
 
         setRandomSeed(m_session->getRandomSeed());
@@ -3617,6 +3615,31 @@ void TerminalDisplay::itemChange(ItemChange change, const ItemChangeData & value
     }
 
     QQuickPaintedItem::itemChange(change, value);
+}
+
+void TerminalDisplay::startTerminalTeletype()
+{
+    if ( m_session->isRunning() ) {
+        return;
+    }
+
+    m_session->runEmptyPTY();
+    // redirect data from TTY to external recipient
+    connect( m_session->emulation(), SIGNAL(sendData(const char *,int)),
+             this, SIGNAL(sendData(const char *,int)) );
+
+    connect( m_session->emulation(), SIGNAL(sendData(const char *,int)),
+             this, SLOT(test(const char *,int)) );
+}
+
+int TerminalDisplay::getPtySlaveFd() const
+{
+    return m_session->getPtySlaveFd();
+}
+void TerminalDisplay::test(const char * data,int len){
+    QString result = QString(data);
+    emit sendData2(result);
+
 }
 
 //#include "TerminalDisplay.moc"

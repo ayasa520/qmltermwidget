@@ -312,3 +312,24 @@ QString KSession::currentDir()
 {
     return m_session->currentDir();
 }
+
+int KSession::getPtySlaveFd() const
+{
+    return m_session->getPtySlaveFd();
+}
+
+Emulation * KSession::emulation() const
+{
+    return m_session->emulation();
+}
+
+void KSession::runEmptyPTY()
+{
+    m_session->runEmptyPTY();
+    emit started();
+}
+
+bool KSession::isRunning() const
+{
+    return m_session->isRunning();
+}
